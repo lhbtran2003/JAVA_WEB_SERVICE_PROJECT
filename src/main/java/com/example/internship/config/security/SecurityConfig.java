@@ -28,8 +28,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private static final String USER_ENDPOINT = "/api/users/**";
-    private static final String STUDENT_ENDPOINT = "/api/students/**";
-    private static final String MENTOR_ENDPOINT = "/api/mentors/**";
+    private static final String STUDENT_ENDPOINT = "/api/students";
+    private static final String STUDENT_BY_ID_ENDPOINT = "/api/students/**";
+    private static final String MENTOR_ENDPOINT = "/api/mentors";
+    private static final String MENTOR_BY_ID_ENDPOINT = "/api/mentors/**";
     private static final String INTERNSHIP_PHASE_ENDPOINT = "/api/internship_phases/**";
     private static final String EVALUATION_CRITERIA_ENDPOINT = "/api/evaluation_criteria/**";
     private static final String ASSESSMENT_ROUND_ENDPOINT = "/api/assessment_rounds/**";
@@ -79,15 +81,15 @@ public class SecurityConfig {
 
                         //student
                         .requestMatchers(HttpMethod.GET, STUDENT_ENDPOINT).hasAnyRole("ADMIN", "MENTOR")
-                        .requestMatchers(HttpMethod.GET, STUDENT_ENDPOINT).authenticated()
+                        .requestMatchers(HttpMethod.GET, STUDENT_BY_ID_ENDPOINT).authenticated()
                         .requestMatchers(HttpMethod.POST, STUDENT_ENDPOINT).hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, STUDENT_ENDPOINT).hasAnyRole("ADMIN", "STUDENT")
+                        .requestMatchers(HttpMethod.PUT, STUDENT_BY_ID_ENDPOINT).hasAnyRole("ADMIN", "STUDENT")
 
                         //mentor
                         .requestMatchers(HttpMethod.GET, MENTOR_ENDPOINT).hasAnyRole("ADMIN", "STUDENT")
-                        .requestMatchers(HttpMethod.GET, MENTOR_ENDPOINT).authenticated()
+                        .requestMatchers(HttpMethod.GET, MENTOR_BY_ID_ENDPOINT).authenticated()
                         .requestMatchers(HttpMethod.POST, MENTOR_ENDPOINT).hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, MENTOR_ENDPOINT).hasAnyRole("ADMIN", "MENTOR")
+                        .requestMatchers(HttpMethod.PUT, MENTOR_BY_ID_ENDPOINT).hasAnyRole("ADMIN", "MENTOR")
 
                         //internships
                         .requestMatchers(HttpMethod.GET, INTERNSHIP_PHASE_ENDPOINT).authenticated()

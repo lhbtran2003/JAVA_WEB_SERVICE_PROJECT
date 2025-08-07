@@ -1,7 +1,9 @@
 package com.example.internship.dto.request.student;
 
 import com.example.internship.dto.request.user.AddUserRequest;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,5 +19,14 @@ public class AddStudentRequest {
     private String className;
     private LocalDate dateOfBirth;
     private String address;
-    private AddUserRequest addUserRequest;
+    @NotNull(message = "Username không được bỏ trống")
+    private String username;
+    @NotNull(message = "Mật khẩu không được bỏ trống")
+    private String password;
+    @NotNull(message = "Tên đầy đủ không được bỏ trống")
+    private String fullName;
+    @NotNull(message = "Email không được bỏ trống")
+    @Email(message = "Email không đúng định dạng")
+    private String email;
+    private String phoneNumber;
 }

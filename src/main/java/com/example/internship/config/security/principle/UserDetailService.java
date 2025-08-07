@@ -25,6 +25,7 @@ public class UserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản có "+username));
         List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(user.getRole().name()));
         return UserDetail.builder()
+                .id(user.getUserId())
                 .username(user.getUsername())
                 .password(user.getPasswordHash())
                 .authorities(grantedAuthorities)

@@ -9,9 +9,14 @@ import java.util.List;
 
 @Builder
 public class UserDetail implements UserDetails {
+    private int id;
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+
+    public Integer getId() {
+        return id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
