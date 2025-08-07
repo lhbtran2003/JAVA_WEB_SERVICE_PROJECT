@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 // 2. Annotation cho Update (kiểm tra email không trùng trừ của chính mình)
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueEmailForUpdateValidator.class)
 public @interface UniqueEmailForUpdate {

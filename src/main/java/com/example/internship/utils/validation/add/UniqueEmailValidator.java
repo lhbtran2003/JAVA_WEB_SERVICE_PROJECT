@@ -14,7 +14,6 @@ public class UniqueEmailValidator extends AbstractUniqueValidator<UniqueEmail, S
 
     @Override
     protected boolean isValueExisted(String value) {
-        Long count = userRepository.isExistEmail(value,null);
-        return count > 0;
+        return false;
     }
 }

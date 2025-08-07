@@ -1,5 +1,6 @@
 package com.example.internship.mapper;
 
+import com.example.internship.config.exception.InvalidRoleException;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.RoleName;
 import com.example.internship.entity.User;
@@ -20,7 +21,7 @@ public class RoleNameMapper {
                 roleName = RoleName.ROLE_ADMIN;
                 break;
             default:
-                break;
+                throw new InvalidRoleException("Vai trò không hợp lệ. Vui lòng chọn 1 trong 3 (admin,mentor,student))");
         }
         return roleName;
     }

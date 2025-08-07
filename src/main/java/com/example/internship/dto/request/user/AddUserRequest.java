@@ -17,7 +17,6 @@ public class AddUserRequest {
     private String fullName;
     @NotNull(message = "Email không được bỏ trống")
     @Email(message = "Email không đúng định dạng")
-    @UniqueEmail(message = "Email đã được sử dụng")
     private String email;
     private String phoneNumber;
     @NotNull(message = "Vai trò không được bỏ trống")

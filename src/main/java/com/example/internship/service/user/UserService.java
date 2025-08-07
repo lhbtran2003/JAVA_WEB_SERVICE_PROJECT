@@ -1,10 +1,13 @@
 package com.example.internship.service.user;
 
+import com.example.internship.config.exception.ConflictDataException;
 import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.config.security.jwt.JwtProvider;
 import com.example.internship.config.security.principle.UserDetail;
 import com.example.internship.dto.request.user.AddUserRequest;
 import com.example.internship.dto.request.FormLogin;
+import com.example.internship.dto.request.user.UpdateIsActiveRequest;
+import com.example.internship.dto.request.user.UpdateRoleRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.RoleName;
@@ -97,11 +100,15 @@ public class UserService implements IUserService {
 
     @Override
     public ApiResponse<User> createUser(AddUserRequest request) {
+        Long count  = userRepository.countByEmail(request.getEmail());
+        if (count > 0) {
+            throw new ConflictDataException("Email đã được sử dụng");
+        }
         User user = userMapper.toEntity(request);
         return ApiResponse.<User>builder()
                 .success(true)
                 .message("Tạo mới tài khoản thành công")
-                .data(user)
+                .data(userRepository.save(user))
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -109,18 +116,22 @@ public class UserService implements IUserService {
     @Override
     public ApiResponse<User> updateUser(Integer id, UpdateUserRequest request) {
         User userExist = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy user có id " + id));
+        Long count = userRepository.countByEmailExcludeUserId(request.getEmail(), id);
+        if (count > 0) {
+            throw new ConflictDataException("Email đã được sử dụng");
+        }
         User user = userMapper.toEntity(request, userExist);
         return ApiResponse.<User>builder()
                 .success(true)
                 .message("Cập nhật thông tin cơ bản thành công")
-                .data(userExist)
+                .data(userRepository.save(user))
                 .build();
     }
 
     @Override
-    public ApiResponse<User> changeStatus(Integer id) {
+    public ApiResponse<User> changeStatus(Integer id, UpdateIsActiveRequest request) {
         User userExist = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy user có id " + id));
-        userExist.setActive(!userExist.isActive());
+        userExist.setActive(request.isActive());
         return ApiResponse.<User>builder()
                 .success(true)
                 .message("Thay đổi trạng thái người dùng thành công")
@@ -129,9 +140,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ApiResponse<User> changeRole(Integer id, String role) {
+    public ApiResponse<User> changeRole(Integer id, UpdateRoleRequest role) {
         User userExist = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy user có id " + id));
-        RoleName roleName = RoleNameMapper.mapRoleToRoleName(role);
+        RoleName roleName = RoleNameMapper.mapRoleToRoleName(role.getRole());
         userExist.setRole(roleName);
         return ApiResponse.<User>builder()
                 .success(true)
@@ -142,8 +153,8 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUser(Integer id) {
-        if (!userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-        }
+        userRepository.deleteById(id);
     }
+
+
 }

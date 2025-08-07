@@ -1,6 +1,8 @@
 package com.example.internship.controller;
 
 import com.example.internship.dto.request.user.AddUserRequest;
+import com.example.internship.dto.request.user.UpdateIsActiveRequest;
+import com.example.internship.dto.request.user.UpdateRoleRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.User;
@@ -39,8 +41,19 @@ public class UserController {
         return new ResponseEntity<>(userService.updateUser(id, request),HttpStatus.OK);
     }
 
+    @PutMapping("/{user_id}/status")
+    public ResponseEntity<ApiResponse<User>> updateStatus(@PathVariable int user_id, @Valid @RequestBody UpdateIsActiveRequest request){
+        return new ResponseEntity<>(userService.changeStatus(user_id, request),HttpStatus.OK);
+    }
+
+    @PutMapping("/{user_id}/role")
+    public ResponseEntity<ApiResponse<User>> updateRole(@PathVariable int user_id, @Valid @RequestBody UpdateRoleRequest request){
+        return new ResponseEntity<>(userService.changeRole(user_id, request),HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id){
+        userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
