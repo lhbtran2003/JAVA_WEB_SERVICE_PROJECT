@@ -1,5 +1,6 @@
 package com.example.internship.mapper;
 
+import com.example.internship.dto.request.student.AddStudentRequest;
 import com.example.internship.dto.request.user.AddUserRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;
 import com.example.internship.entity.RoleName;
@@ -10,10 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
-    public User toEntity(AddUserRequest request){
+    public static User toEntity(AddUserRequest request, PasswordEncoder passwordEncoder){
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -38,7 +37,7 @@ public class UserMapper {
         return user;
     }
 
-    public User toEntity(UpdateUserRequest request, User userExisted){
+    public static User toEntity(UpdateUserRequest request, User userExisted, PasswordEncoder passwordEncoder){
         userExisted.setUsername(request.getUsername());
         userExisted.setEmail(request.getEmail());
         userExisted.setFullName(request.getFullName());
@@ -46,4 +45,6 @@ public class UserMapper {
         userExisted.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         return userExisted;
     }
+
+
 }

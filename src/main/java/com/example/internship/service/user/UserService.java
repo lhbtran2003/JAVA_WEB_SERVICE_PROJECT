@@ -20,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ApiResponse<String> login(FormLogin request) {
@@ -104,7 +105,7 @@ public class UserService implements IUserService {
         if (count > 0) {
             throw new ConflictDataException("Email đã được sử dụng");
         }
-        User user = userMapper.toEntity(request);
+        User user = UserMapper.toEntity(request,passwordEncoder);
         return ApiResponse.<User>builder()
                 .success(true)
                 .message("Tạo mới tài khoản thành công")
@@ -120,7 +121,7 @@ public class UserService implements IUserService {
         if (count > 0) {
             throw new ConflictDataException("Email đã được sử dụng");
         }
-        User user = userMapper.toEntity(request, userExist);
+        User user = UserMapper.toEntity(request, userExist,passwordEncoder);
         return ApiResponse.<User>builder()
                 .success(true)
                 .message("Cập nhật thông tin cơ bản thành công")

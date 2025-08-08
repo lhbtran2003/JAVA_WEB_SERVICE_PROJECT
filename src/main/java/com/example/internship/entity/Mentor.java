@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -21,4 +23,25 @@ public class Mentor {
     @JoinColumn(name = "mentor_id")
     @Where(clause = "role = 'ROLE_MENTOR'")
     private User user;
+
+    @Column(length = 100)
+    private String department;
+
+    @Column(length = 50)
+    private String academicRank;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void beforeCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
