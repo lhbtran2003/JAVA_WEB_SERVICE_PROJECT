@@ -64,7 +64,7 @@ public class MentorServiceImpl implements IMentorService {
     @Override
     public ApiResponse<Mentor> getMentorByIdForMentor(Integer id, Integer idLogin) {
         if (!Objects.equals(id, idLogin)) {
-            throw new NotFoundException("Không tìm thấy tài nguyên");
+            throw new NotFoundException("Không có quyền truy cập tài nguyên này");
         }
         Mentor mentor = mentorRepository.findById(id).get();
         return ApiResponse.<Mentor>builder()

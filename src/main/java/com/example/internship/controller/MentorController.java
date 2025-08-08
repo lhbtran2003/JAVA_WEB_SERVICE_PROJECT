@@ -37,8 +37,7 @@ public class MentorController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Mentor>> getMentorById(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail) {
         Collection<? extends GrantedAuthority> authorities = userDetail.getAuthorities();
-        if (authorities.contains(new SimpleGrantedAuthority("ROLE_MENTOR"))
-                && Objects.equals(id, userDetail.getId())) {
+        if (authorities.contains(new SimpleGrantedAuthority("ROLE_MENTOR"))) {
             return new ResponseEntity<>(mentorService.getMentorByIdForMentor(id,userDetail.getId()), HttpStatus.OK);
         }
         return new ResponseEntity<>(mentorService.getMentorById(id), HttpStatus.OK);

@@ -5,6 +5,7 @@ import com.example.internship.dto.request.internshipphase.UpdatePhaseRequest;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.InternshipPhase;
 import com.example.internship.service.internshipphase.InternshipPhaseImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,12 @@ public class InternshipPhaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<InternshipPhase>> createInternshipPhase(@RequestBody AddPhaseRequest request) {
+    public ResponseEntity<ApiResponse<InternshipPhase>> createInternshipPhase(@Valid @RequestBody AddPhaseRequest request) {
         return new ResponseEntity<>(internshipPhaseImpl.createInternshipPhase(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<InternshipPhase>> updateInternshipPhase(@PathVariable Integer id, @RequestBody UpdatePhaseRequest request) {
+    public ResponseEntity<ApiResponse<InternshipPhase>> updateInternshipPhase(@PathVariable Integer id, @Valid @RequestBody UpdatePhaseRequest request) {
         return new ResponseEntity<>(internshipPhaseImpl.updateInternshipPhase(id, request), HttpStatus.OK);
     }
 
