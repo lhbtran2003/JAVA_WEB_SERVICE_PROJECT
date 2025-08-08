@@ -1,10 +1,9 @@
 package com.example.internship.controller;
 
-import com.example.internship.dto.request.FormLogin;
+import com.example.internship.dto.request.auth.FormLogin;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.User;
 import com.example.internship.service.user.IUserService;
-import com.example.internship.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

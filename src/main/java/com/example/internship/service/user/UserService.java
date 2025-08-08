@@ -5,7 +5,7 @@ import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.config.security.jwt.JwtProvider;
 import com.example.internship.config.security.principle.UserDetail;
 import com.example.internship.dto.request.user.AddUserRequest;
-import com.example.internship.dto.request.FormLogin;
+import com.example.internship.dto.request.auth.FormLogin;
 import com.example.internship.dto.request.user.UpdateIsActiveRequest;
 import com.example.internship.dto.request.user.UpdateRoleRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;

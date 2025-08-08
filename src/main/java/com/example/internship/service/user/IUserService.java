@@ -1,7 +1,7 @@
 package com.example.internship.service.user;
 
 import com.example.internship.dto.request.user.AddUserRequest;
-import com.example.internship.dto.request.FormLogin;
+import com.example.internship.dto.request.auth.FormLogin;
 import com.example.internship.dto.request.user.UpdateIsActiveRequest;
 import com.example.internship.dto.request.user.UpdateRoleRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;

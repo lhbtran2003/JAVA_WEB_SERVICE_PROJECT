@@ -38,7 +38,6 @@ public class UserMapper {
     }
 
     public static User toEntity(UpdateUserRequest request, User userExisted, PasswordEncoder passwordEncoder){
-        userExisted.setUsername(request.getUsername());
         userExisted.setEmail(request.getEmail());
         userExisted.setFullName(request.getFullName());
         userExisted.setPhoneNumber(request.getPhoneNumber());

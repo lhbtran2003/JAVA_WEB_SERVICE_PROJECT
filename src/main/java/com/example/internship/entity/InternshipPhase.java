@@ -21,6 +21,9 @@ public class InternshipPhase {
     @Column(name = "phase_id")
     private Integer phaseId;
 
+    @Column(name = "phase_name", length = 100, nullable = false, unique = true)
+    private String phaseName;
+
     @Column(nullable = false)
     private LocalDate startDate;
     @Column(nullable = false)

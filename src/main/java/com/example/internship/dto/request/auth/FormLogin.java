@@ -1,4 +1,4 @@
-package com.example.internship.dto.request;
+package com.example.internship.dto.request.auth;
 
 import lombok.Getter;
 import lombok.Setter;

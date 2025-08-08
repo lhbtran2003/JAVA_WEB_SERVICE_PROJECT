@@ -1,5 +1,6 @@
 package com.example.internship.service.student;
 
+import com.example.internship.config.exception.ConflictDataException;
 import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.dto.request.student.AddStudentRequest;
 import com.example.internship.dto.request.student.UpdateStudentRequest;
@@ -30,7 +31,10 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public ApiResponse<Student> createStudent(AddStudentRequest request) {
-
+        Long count = studentRepository.countAllByStudentCode(request.getStudentCode());
+        if (count > 0) {
+            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
+        }
         AddUserRequest addUserRequest = StudentMapper.convertToAddUserRequest(request);
         User user = UserMapper.toEntity(addUserRequest, passwordEncoder);
 
@@ -97,6 +101,10 @@ public class StudentServiceImpl implements IStudentService {
         if (!studentRepository.existsById(id)) {
             throw new NotFoundException("Tài nguyên không tồn tại");
         }
+        Long count = studentRepository.countByStudentCodeExcludeStudentId(request.getStudentCode(), id);
+        if (count > 0) {
+            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
+        }
         Student studentExisted = studentRepository.findById(id).get();
         Student student = StudentMapper.toEntity(request,studentExisted);
         return ApiResponse.<Student>builder()
@@ -111,6 +119,10 @@ public class StudentServiceImpl implements IStudentService {
     public ApiResponse<Student> updateStudentByStudent(Integer id, Integer idLogin, UpdateStudentRequest request) {
         if (!idLogin.equals(id)) {
             throw new NotFoundException("Ko có quyền truy cập");
+        }
+        Long count = studentRepository.countByStudentCodeExcludeStudentId(request.getStudentCode(), id);
+        if (count > 0) {
+            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
         }
         Student studentExisted = studentRepository.findById(id).get();
         Student student = StudentMapper.toEntity(request,studentExisted);
