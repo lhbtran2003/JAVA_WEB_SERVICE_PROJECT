@@ -5,6 +5,7 @@ import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.dto.request.evaluationcriteria.AddEvaluationRequest;
 import com.example.internship.dto.request.evaluationcriteria.UpdateEvaluationRequest;
 import com.example.internship.dto.response.ApiResponse;
+import com.example.internship.dto.response.FieldErrorResponse;
 import com.example.internship.entity.EvaluationCriteria;
 import com.example.internship.mapper.EvaluationMapper;
 import com.example.internship.repository.EvaluationCriteriaRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,9 +47,14 @@ public class EvaluationCriteriaServiceImpl implements IEvaluationCriteriaService
 
     @Override
     public ApiResponse<EvaluationCriteria> createEvaluationCriteria(AddEvaluationRequest request) {
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
         Long count = evaluationCriteriaRepository.countByCriterionName(request.getCriterionName());
         if (count > 0) {
-            throw new ConflictDataException("Tên tiêu chí đánh giá đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("criterionName", "Tiêu chí đánh giá này đã tồn tại"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         EvaluationCriteria evaluationCriteria = EvaluationMapper.toEntity(request);
         return ApiResponse.<EvaluationCriteria>builder()
@@ -63,9 +70,13 @@ public class EvaluationCriteriaServiceImpl implements IEvaluationCriteriaService
         if (!evaluationCriteriaRepository.existsById(id)) {
             throw new NotFoundException("Không tìm thấy tài nguyên");
         }
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
         Long count = evaluationCriteriaRepository.countByCriterionNameExcludeId(request.getCriterionName(), id);
         if (count > 0) {
-            throw new ConflictDataException("Tên tiêu chí đánh giá đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("criterionName", "Tên đã được sử dụng"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         EvaluationCriteria evaluationCriteriaExisted = evaluationCriteriaRepository.findById(id).get();
         EvaluationCriteria evaluationCriteria = EvaluationMapper.toEntity(evaluationCriteriaExisted, request);

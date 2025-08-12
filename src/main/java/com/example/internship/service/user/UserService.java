@@ -10,6 +10,7 @@ import com.example.internship.dto.request.user.UpdateIsActiveRequest;
 import com.example.internship.dto.request.user.UpdateRoleRequest;
 import com.example.internship.dto.request.user.UpdateUserRequest;
 import com.example.internship.dto.response.ApiResponse;
+import com.example.internship.dto.response.FieldErrorResponse;
 import com.example.internship.entity.RoleName;
 import com.example.internship.entity.User;
 import com.example.internship.mapper.RoleNameMapper;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -101,9 +103,18 @@ public class UserService implements IUserService {
 
     @Override
     public ApiResponse<User> createUser(AddUserRequest request) {
-        Long count  = userRepository.countByEmail(request.getEmail());
-        if (count > 0) {
-            throw new ConflictDataException("Email đã được sử dụng");
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
+        Long countByEmail  = userRepository.countByEmail(request.getEmail());
+        if (countByEmail > 0) {
+            errorResponses.add(new FieldErrorResponse("email","Email đã đươợc sử dụng"));
+        }
+        Long countByUsername = userRepository.countByUsername(request.getUsername());
+        if (countByUsername > 0) {
+            errorResponses.add(new FieldErrorResponse("username","Username đã đươợc sử dụng"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         User user = UserMapper.toEntity(request,passwordEncoder);
         return ApiResponse.<User>builder()
@@ -117,9 +128,14 @@ public class UserService implements IUserService {
     @Override
     public ApiResponse<User> updateUser(Integer id, UpdateUserRequest request) {
         User userExist = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Không tìm thấy user có id " + id));
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
         Long count = userRepository.countByEmailExcludeUserId(request.getEmail(), id);
         if (count > 0) {
-            throw new ConflictDataException("Email đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("email","Email đã đươợc sử dụng"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         User user = UserMapper.toEntity(request, userExist,passwordEncoder);
         return ApiResponse.<User>builder()

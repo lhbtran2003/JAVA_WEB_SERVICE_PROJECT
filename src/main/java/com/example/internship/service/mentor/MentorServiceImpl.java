@@ -1,25 +1,27 @@
 package com.example.internship.service.mentor;
 
+import com.example.internship.config.exception.ConflictDataException;
 import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.dto.request.mentor.AddMentorRequest;
 import com.example.internship.dto.request.mentor.MentorDto;
 import com.example.internship.dto.request.mentor.UpdateMentorRequest;
 import com.example.internship.dto.request.user.AddUserRequest;
 import com.example.internship.dto.response.ApiResponse;
+import com.example.internship.dto.response.FieldErrorResponse;
 import com.example.internship.entity.Mentor;
-import com.example.internship.entity.Student;
 import com.example.internship.entity.User;
 import com.example.internship.mapper.MentorMapper;
 import com.example.internship.mapper.UserMapper;
 import com.example.internship.repository.MentorRepository;
+import com.example.internship.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class MentorServiceImpl implements IMentorService {
 
     private final MentorRepository mentorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @Override
     public ApiResponse<List<Mentor>> getAllMentors() {
@@ -77,6 +80,22 @@ public class MentorServiceImpl implements IMentorService {
 
     @Override
     public ApiResponse<Mentor> createMentor(AddMentorRequest request) {
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
+        Long countUserEmailExisted = userRepository.countByEmail(request.getEmail());
+        if (countUserEmailExisted > 0) {
+           errorResponses.add(new FieldErrorResponse("email", "Email đã được sử dụng"));
+        }
+
+        Long countUsernameExisted = userRepository.countByUsername(request.getUsername());
+        if (countUsernameExisted > 0) {
+            errorResponses.add(new FieldErrorResponse("username", "Username đã được sử dụng"));
+        }
+
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
+        }
+
         AddUserRequest addUserRequest = MentorMapper.convertToAddUserRequest(request);
         User user = UserMapper.toEntity(addUserRequest,passwordEncoder);
         Mentor mentor = MentorMapper.toEntity(request);

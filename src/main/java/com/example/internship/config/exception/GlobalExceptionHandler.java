@@ -34,26 +34,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ConflictDataException.class)
-    public ResponseEntity<ApiResponse<String>> handleConflictDataException(ConflictDataException ex) {
-        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .success(false)
-                .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponse<String>> handleBadRequestException(BadRequestException ex) {
-        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .success(false)
-                .message(ex.getMessage())
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<FieldErrorResponse> errorList = ex.getBindingResult()
@@ -70,4 +50,36 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ConflictDataException.class)
+    public ResponseEntity<ApiResponse< List<FieldErrorResponse>>> handleConflictDataException(ConflictDataException ex) {
+        ApiResponse< List<FieldErrorResponse>> apiResponse = ApiResponse.< List<FieldErrorResponse>>builder()
+                .success(false)
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(ex.getErrors())
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse<String>> handleBadRequestException(BadRequestException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .success(false)
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<String>> handleAccessDeniedException(AccessDeniedException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .success(false)
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
+    }
+
+
 }

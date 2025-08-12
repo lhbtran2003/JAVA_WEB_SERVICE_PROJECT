@@ -5,6 +5,7 @@ import com.example.internship.dto.request.evaluationcriteria.UpdateEvaluationReq
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.EvaluationCriteria;
 import com.example.internship.service.evaluationcriteria.IEvaluationCriteriaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +30,17 @@ public class EvaluationCriteriaController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EvaluationCriteria>> createEvaluationCriteria(@RequestBody AddEvaluationRequest request){
+    public ResponseEntity<ApiResponse<EvaluationCriteria>> createEvaluationCriteria(@Valid @RequestBody AddEvaluationRequest request){
         return new ResponseEntity<>(evaluationCriteriaService.createEvaluationCriteria(request),HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<EvaluationCriteria>> updateEvaluationCriteria(@PathVariable Integer id, @RequestBody UpdateEvaluationRequest request){
+    public ResponseEntity<ApiResponse<EvaluationCriteria>> updateEvaluationCriteria(@PathVariable Integer id,@Valid @RequestBody UpdateEvaluationRequest request){
         return new ResponseEntity<>(evaluationCriteriaService.updateEvaluationCriteria(id,request),HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteEvaluationCriteria(@PathVariable Integer id){
-        return new ResponseEntity<>(evaluationCriteriaService.deleteEvaluationCriteria(id),HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(evaluationCriteriaService.deleteEvaluationCriteria(id),HttpStatus.OK);
     }
 }

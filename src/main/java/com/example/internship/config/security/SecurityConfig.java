@@ -37,7 +37,7 @@ public class SecurityConfig {
     private static final String ASSESSMENT_ROUND_ENDPOINT = "/api/assessment_rounds/**";
     private static final String ROUND_CRITERIA_ENDPOINT = "/api/round_criteria/**";
     private static final String INTERNSHIP_ASSIGNMENT_ENDPOINT = "/api/internship_assignments/**";
-    private static final String ASSIGNMENT_RESULT_ENDPOINT = "/api/assessment_results/**";
+    private static final String ASSESSMENT_RESULT_ENDPOINT = "/api/assessment_results/**";
 
     private final UserDetailService userDetailsService;
     public final JwtProvider jwtProvider;
@@ -121,9 +121,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, INTERNSHIP_ASSIGNMENT_ENDPOINT).hasRole("ADMIN")
 
                         //assignment result
-                        .requestMatchers(HttpMethod.GET, EVALUATION_CRITERIA_ENDPOINT).authenticated()
-                        .requestMatchers(HttpMethod.POST, EVALUATION_CRITERIA_ENDPOINT).hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, EVALUATION_CRITERIA_ENDPOINT).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, ASSESSMENT_RESULT_ENDPOINT).authenticated()
+                        .requestMatchers(HttpMethod.POST, ASSESSMENT_RESULT_ENDPOINT).hasRole("MENTOR")
+                        .requestMatchers(HttpMethod.PUT, ASSESSMENT_RESULT_ENDPOINT).hasRole("MENTOR")
                         .anyRequest().authenticated()
 
                 )

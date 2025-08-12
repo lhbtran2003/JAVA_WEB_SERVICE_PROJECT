@@ -6,6 +6,7 @@ import com.example.internship.dto.request.mentor.UpdateMentorRequest;
 import com.example.internship.dto.response.ApiResponse;
 import com.example.internship.entity.Mentor;
 import com.example.internship.service.mentor.IMentorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class MentorController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Mentor>> createMentor(@RequestBody AddMentorRequest request) {
+    public ResponseEntity<ApiResponse<Mentor>> createMentor(@Valid @RequestBody AddMentorRequest request) {
         return new ResponseEntity<>(mentorService.createMentor(request), HttpStatus.OK);
     }
 
@@ -54,8 +55,7 @@ public class MentorController {
                                                             @AuthenticationPrincipal UserDetail userDetail
     ) {
         Collection<? extends GrantedAuthority> authorities = userDetail.getAuthorities();
-        if (authorities.contains(new SimpleGrantedAuthority("ROLE_MENTOR"))
-                && Objects.equals(id, userDetail.getId())) {
+        if (authorities.contains(new SimpleGrantedAuthority("ROLE_MENTOR"))) {
             return new ResponseEntity<>(mentorService.updateMentorByMentor(id,userDetail.getId(),request), HttpStatus.OK);
         }
         return new ResponseEntity<>(mentorService.updateMentor(id,request), HttpStatus.OK);

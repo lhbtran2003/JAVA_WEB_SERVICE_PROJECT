@@ -6,6 +6,7 @@ import com.example.internship.config.exception.NotFoundException;
 import com.example.internship.dto.request.internshipphase.AddPhaseRequest;
 import com.example.internship.dto.request.internshipphase.UpdatePhaseRequest;
 import com.example.internship.dto.response.ApiResponse;
+import com.example.internship.dto.response.FieldErrorResponse;
 import com.example.internship.entity.InternshipPhase;
 import com.example.internship.mapper.PhaseMapper;
 import com.example.internship.repository.AssessmentRoundRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,9 +48,14 @@ public class InternshipPhaseImpl implements IInternshipPhaseService{
 
     @Override
     public ApiResponse<InternshipPhase> createInternshipPhase(AddPhaseRequest request) {
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
         Long count = internshipPhaseRepository.countInternshipPhaseByPhaseName(request.getPhaseName());
         if (count > 0) {
-            throw  new ConflictDataException("Tên đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("phaseName", "Tên đã được sử dụng"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         InternshipPhase internshipPhase = PhaseMapper.toEntity(request);
         return ApiResponse.<InternshipPhase>builder()
@@ -64,10 +71,13 @@ public class InternshipPhaseImpl implements IInternshipPhaseService{
         if (!internshipPhaseRepository.existsById(internshipPhaseId)) {
             throw  new NotFoundException("Internship Phase Not Found");
         }
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
         Long count = internshipPhaseRepository.countPhaseExcludeId(request.getPhaseName(), internshipPhaseId);
         if (count > 0) {
-            throw  new ConflictDataException("Tên đã được sử dụng");
-
+            errorResponses.add(new FieldErrorResponse("phaseName", "Tên đã được sử dụng"));
+        }
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         InternshipPhase internshipPhaseExisted = internshipPhaseRepository.findById(internshipPhaseId).get();
         InternshipPhase internshipPhase= PhaseMapper.toEntity(internshipPhaseExisted,request);

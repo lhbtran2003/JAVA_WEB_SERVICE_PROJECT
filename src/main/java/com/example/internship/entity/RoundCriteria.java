@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "round_criteria")
+@Table(name = "round_criteria",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"assessment_round_id", "criterion_id"})
+)
 public class RoundCriteria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class RoundCriteria {
     @JoinColumn(name = "criterion_id", nullable = false)
     private EvaluationCriteria evaluationCriteria;
 
-    @Column( nullable = false, columnDefinition = "DECIMAL(5,2) CHECK (weight > 0)")
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,2) CHECK (weight > 0)")
     private BigDecimal weight; // trọng số (vd: 0.2, 0.3, ...)
 
     private LocalDateTime createdAt;
@@ -49,7 +51,6 @@ public class RoundCriteria {
     public void beforeUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
 
 
 }

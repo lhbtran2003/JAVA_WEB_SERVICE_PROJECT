@@ -6,17 +6,20 @@ import com.example.internship.dto.request.student.AddStudentRequest;
 import com.example.internship.dto.request.student.UpdateStudentRequest;
 import com.example.internship.dto.request.user.AddUserRequest;
 import com.example.internship.dto.response.ApiResponse;
+import com.example.internship.dto.response.FieldErrorResponse;
 import com.example.internship.entity.*;
 import com.example.internship.mapper.StudentMapper;
 import com.example.internship.mapper.UserMapper;
 import com.example.internship.repository.InternshipAssignmentRepository;
 import com.example.internship.repository.MentorRepository;
 import com.example.internship.repository.StudentRepository;
+import com.example.internship.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,15 +30,32 @@ public class StudentServiceImpl implements IStudentService {
     private final PasswordEncoder passwordEncoder;
     public final InternshipAssignmentRepository internshipAssignmentRepository;
     public final MentorRepository mentorRepository;
-    private final UserMapper userMapper;
+    public final UserRepository userRepository;
 
     @Override
     public ApiResponse<Student> createStudent(AddStudentRequest request) {
-        Long count = studentRepository.countAllByStudentCode(request.getStudentCode());
-        if (count > 0) {
-            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
+
+        Long countStudentCodeExisted = studentRepository.countAllByStudentCode(request.getStudentCode());
+        if (countStudentCodeExisted > 0) {
+            errorResponses.add(new FieldErrorResponse("studentCode", "Mã sinh viên đã được sử dụng"));
+        }
+
+        Long countUserEmailExisted = userRepository.countByEmail(request.getEmail());
+        if (countUserEmailExisted > 0) {
+            errorResponses.add(new FieldErrorResponse("email", "Email đã được sử dụng"));
+        }
+
+        Long countUsernameExisted = userRepository.countByUsername(request.getUsername());
+        if (countUsernameExisted > 0) {
+            errorResponses.add(new FieldErrorResponse("username", "Username đã được sử dụng"));
+        }
+
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
         }
         AddUserRequest addUserRequest = StudentMapper.convertToAddUserRequest(request);
+
         User user = UserMapper.toEntity(addUserRequest, passwordEncoder);
 
         Student student = StudentMapper.toEntity(request);
@@ -101,10 +121,17 @@ public class StudentServiceImpl implements IStudentService {
         if (!studentRepository.existsById(id)) {
             throw new NotFoundException("Tài nguyên không tồn tại");
         }
+
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
         Long count = studentRepository.countByStudentCodeExcludeStudentId(request.getStudentCode(), id);
         if (count > 0) {
-            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("studentCode", "Mã sinh viên đã được sử dụng"));
         }
+
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
+        }
+
         Student studentExisted = studentRepository.findById(id).get();
         Student student = StudentMapper.toEntity(request,studentExisted);
         return ApiResponse.<Student>builder()
@@ -120,10 +147,16 @@ public class StudentServiceImpl implements IStudentService {
         if (!idLogin.equals(id)) {
             throw new NotFoundException("Ko có quyền truy cập");
         }
+        List<FieldErrorResponse> errorResponses = new ArrayList<>();
         Long count = studentRepository.countByStudentCodeExcludeStudentId(request.getStudentCode(), id);
         if (count > 0) {
-            throw new ConflictDataException("Mã sinh viên đã được sử dụng");
+            errorResponses.add(new FieldErrorResponse("studentCode", "Mã sinh viên đã được sử dụng"));
         }
+
+        if (!errorResponses.isEmpty()) {
+            throw new ConflictDataException(errorResponses);
+        }
+
         Student studentExisted = studentRepository.findById(id).get();
         Student student = StudentMapper.toEntity(request,studentExisted);
         return ApiResponse.<Student>builder()

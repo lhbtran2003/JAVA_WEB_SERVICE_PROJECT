@@ -12,14 +12,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "internship_assignment")
+@Table(name = "internship_assignment",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "phase_id"}))
 public class InternshipAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assignment_id")
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
@@ -27,7 +28,7 @@ public class InternshipAssignment {
     @JoinColumn(name = "mentor_id", nullable = false)
     private Mentor mentor;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "phase_id")
     private InternshipPhase internshipPhase;
 
